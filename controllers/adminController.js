@@ -9,7 +9,7 @@ const adminTransfer = async (req, res) => {
     const { account_number, amount, status, account, pin } = req.body;
 
     if (!account_number || isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ msg: "Invalid input data." });
+      return res.status(400).json({ error: "Invalid input data." });
     }
 
     const admin = await User.findById(req.user.userId);
@@ -25,7 +25,7 @@ const adminTransfer = async (req, res) => {
       user = await User.findOne({ checkings_account_number: account_number });
     }
     if (!user) {
-      return res.status(404).json({ msg: "User not found." });
+      return res.status(404).json({ error: "User not found." });
     }
 
     if (account === "savings") {

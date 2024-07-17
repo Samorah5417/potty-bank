@@ -7,7 +7,7 @@ const TransferAdminSchema = new Schema({
   },
   amount: {
     type: Number,
-    required: [true, "Weerey enter the amount wey u wan send"],
+    required: [true, " enter the amount wey u wan send"],
   },
 
   status: {
@@ -17,14 +17,14 @@ const TransferAdminSchema = new Schema({
   },
   account_number: {
     type: String,
-    required: [true, 'weerey enter account number']
+    required: [true, ' enter account number']
   },
   account: {
     type: String,
-    required: [true, "weerey choose an account"],
+    required: [true, " choose an account"],
     enum: {
       values: ["checkings", "savings"],
-      message: "weerey {VALUE} is not supported, na checkings or savings",
+      message: " {VALUE} is not supported, na checkings or savings",
     },
   },
 },
