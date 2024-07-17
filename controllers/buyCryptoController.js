@@ -72,6 +72,7 @@ const createBuyCrypto = async (req, res) => {
 </html>`;
  
     await sendEmail(user.email, subject, text, html);
+    
 
 
   } catch (error) {

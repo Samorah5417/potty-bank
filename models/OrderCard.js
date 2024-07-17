@@ -6,11 +6,15 @@ const OrderCardSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    name: {
+      type: String,
+    },
+
     
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: "pending",
+      default: "completed",
     },
     
     address: {

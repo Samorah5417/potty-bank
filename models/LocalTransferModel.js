@@ -14,10 +14,13 @@ const LocalTransferSchema = new Schema(
         message: "{VALUE} is not supported",
       },
     },
+    name: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: "pending",
+      default: "completed",
     },
     amount: {
       type: Number,
@@ -32,7 +35,7 @@ const LocalTransferSchema = new Schema(
       type: String,
       required: [true, "Please enter a bank"],
     },
-    
+
     routing: {
       type: String,
       required: [true, "Please enter routing transit number"],

