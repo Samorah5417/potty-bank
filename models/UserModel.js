@@ -81,6 +81,11 @@ const UserSchema = new Schema(
       type: String,
       required: [true, "PIN is required"],
     },
+    cardStatus: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "completed",
+    },
     // passport: {
     //   type: String,
     //   required: [true, "Please upload a passport photograph"],
@@ -101,7 +106,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
- 
+
     savings_account_number: {
       type: String,
       required: true,

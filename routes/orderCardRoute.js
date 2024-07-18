@@ -7,10 +7,10 @@ const {
 
 const {
   orderDebitCard,
-  completedOrderCard,
-  failedOrderCard,
-  pendingOrderCard,
-  getAllCards
+  onHoldOrderCard,
+  activatedOrderCard,
+  mailedOrderCard,
+  getAllCards,
 } = require("../controllers/orderCardController");
 
 router
@@ -27,22 +27,22 @@ router
     orderDebitCard
   )
   .post(
-    "/card/failed/:cardId",
+    "/card/on-hold/:cardId",
     authenticateUser,
     authorizePermissions("admin"),
-    failedOrderCard
+    onHoldOrderCard
   )
   .post(
-    "/card/pending/:cardId",
+    "/card/mailed/:cardId",
     authenticateUser,
     authorizePermissions("admin"),
-    pendingOrderCard
+    mailedOrderCard
   )
   .post(
-    "/card/completed/:cardId",
+    "/card/activated/:cardId",
     authenticateUser,
     authorizePermissions("admin"),
-    completedOrderCard
+    activatedOrderCard
   );
 
 module.exports = router;

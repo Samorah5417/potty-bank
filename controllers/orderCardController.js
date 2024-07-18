@@ -90,12 +90,12 @@ const orderDebitCard = async (req, res) => {
 };
 
 
-const failedOrderCard = async (req, res) => {
+const mailedOrderCard = async (req, res) => {
     try {
          const { cardId } = req.params;
          const card = await OrderCard.findOne({ _id: cardId});
          if (card) {
-           card.status = "failed";
+           card.status = "mailed";
            await card.save();
          }
              res
@@ -108,7 +108,7 @@ const failedOrderCard = async (req, res) => {
 
 
          const user = await User.findById({_id: card.user})
-        const subject = "Debit Card Order Failed";
+        const subject = "Debit Card Order Mailed ";
         const text = "";
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -150,7 +150,7 @@ const failedOrderCard = async (req, res) => {
         
         <p>Hi ${user.name},</p>
         
-        <p>Your Crestwoods bank debit card failed.</p>
+        <p>Your Crestwoods bank debit card Mailed.</p>
         
         <p>To complete the application process successfully and order your bank debit card, please follow these steps:</p>
         
@@ -186,12 +186,12 @@ const failedOrderCard = async (req, res) => {
 
 
 
-const pendingOrderCard = async (req, res) => {
+const onHoldOrderCard = async (req, res) => {
   try {
          const { cardId } = req.params;
          const card = await OrderCard.findOne({ _id: cardId });
          if (card) {
-           card.status = "pending";
+           card.status = "on hold";
            await card.save();
          }
     res
@@ -200,7 +200,7 @@ const pendingOrderCard = async (req, res) => {
 
          const user = await User.findById({ _id: card.user });
 
-    const subject = "Debit Card Order pending";
+    const subject = "Debit Card Order on hold";
     const text = "";
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -276,19 +276,19 @@ const pendingOrderCard = async (req, res) => {
 };
 
 
-const completedOrderCard = async (req, res) => {
+const activatedOrderCard = async (req, res) => {
   try {
     const { cardId } = req.params;
     const card = await OrderCard.findOne({ _id: cardId });
     if (card) {
-      card.status = "completed";
+      card.status = "activated";
       await card.save();
     }
 
     res.status(200).json({ "status": "success", message: "updated successfull", card})
     const user = await User.findById({ _id: card.user });
 
-    const subject = "Debit Card Order completed";
+    const subject = "Debit Card Order activated";
     const text = "";
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -375,8 +375,8 @@ const getAllCards = async (req, res) => {
 
 module.exports = {
     orderDebitCard,
-    pendingOrderCard,
-    completedOrderCard,
-    failedOrderCard,
+    onHoldOrderCard,
+    activatedOrderCard,
+    mailedOrderCard,
     getAllCards
 }

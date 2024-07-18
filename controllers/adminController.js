@@ -7,12 +7,14 @@ const LocalTransfer = require('../models/LocalTransferModel')
 const adminTransfer = async (req, res) => {
   try {
     const { account_number, amount, status, account, pin } = req.body;
+    console.log(pin);
 
     if (!account_number || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: "Invalid input data." });
     }
 
     const admin = await User.findById(req.user.userId);
+    console.log(admin.pin)
     if (admin.pin && admin.pin !== pin) {
       return res.status(401).json({ status: "failed", error: "Invalid PIN." });
     }
@@ -138,7 +140,7 @@ const adminTransfer = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find({}).sort({createdAt: -1});
     res.status(200).json({ status: "success", users });
   } catch (error) {
     console.log(error);

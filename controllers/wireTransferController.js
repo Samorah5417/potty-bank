@@ -140,18 +140,22 @@ const getAllTransfersSavings = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
+      
+
     const localTransfers = await LocalTransfer.find({
       user: req.user.userId,
     })
       .sort({ createdAt: -1 })
       .lean();
-
+      console.log(req.user.userId);
+      console.log("hello local transfers",localTransfers);
     const internalTransfers = await InternalTransfer.find({
       user: req.user.userId,
     })
       .sort({ createdAt: -1 })
       .lean();
 
+      
     const transferAdmin = await TransferAdmin.find({
       user: req.user.userId,
     })

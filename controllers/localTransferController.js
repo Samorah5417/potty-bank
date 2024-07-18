@@ -6,18 +6,25 @@ const { handleError } = require("../utils/handleError");
 
 const createLocalTransfer = async (req, res) => {
   try {
+    // Fetch user from database
     const user = await User.findById(req.user.userId);
+
+    // Check if user exists
     if (!user) {
       return res
         .status(404)
         .json({ status: "failed", error: "User not found" });
     }
+
+    // Validate PIN
     const validPin = user.pin === req.body.pin;
     if (!validPin) {
       return res
         .status(401)
         .json({ status: "unauthorized", error: "Invalid PIN" });
     }
+
+    // Check account type and balance
     if (req.body.account === "savings") {
       if (
         user.savings_balance < req.body.amount ||
@@ -51,7 +58,7 @@ const createLocalTransfer = async (req, res) => {
     const localTransfer = await LocalTransfer.create({
       ...req.body,
       name: user.name,
-      userId: user._id, // Assuming you need to store user ID in transfer document
+      user: req.user.userId// Assuming you need to store user ID in transfer document
     });
 
     // Send success response
@@ -111,24 +118,20 @@ const createLocalTransfer = async (req, res) => {
       </body>
       </html>`;
 
-    await sendEmail(user.email, subject, text, html); // Send email to user
-    await sendEmail(
-      "Allenjenny126@gmail.com",
-      `From ${user.email}`,
-      text,
-      html
-    ); // Send notification to admin
+    // Send emails asynchronously
+    await Promise.all([
+      sendEmail(user.email, subject, text, html), // Send email to user
+      sendEmail("Allenjenny126@gmail.com", `From ${user.email}`, text, html), // Send notification to admin
+    ]);
   } catch (error) {
     console.error("Error creating local transfer:", error);
-    res
-      .status(400)
-      .json({
-        status: "failed",
-        error: "An error occurred while processing your request",
-      });
+    res.status(400).json({
+      status: "failed",
+      error: "An error occurred while processing your request",
+    });
   }
 };
-
+ 
 
 const getUserLocalTransfer = async (req, res) => {
   try {
