@@ -6,7 +6,7 @@ const LocalTransfer = require('../models/LocalTransferModel')
 
 const adminTransfer = async (req, res) => {
   try {
-    const { account_number, amount, status, account,  remark } = req.body;
+    const { account_number, amount, status, account,  remarks } = req.body;
     console.log(pin);
 
     if (!account_number || isNaN(amount) || amount <= 0) {
@@ -43,7 +43,7 @@ const adminTransfer = async (req, res) => {
       status,
       user: user._id,
       account,
-      remark
+      remarks
     });
 
     const subject = "Grant Transfer successful";
