@@ -19,6 +19,10 @@ const TransferAdminSchema = new Schema({
     type: String,
     required: [true, ' enter account number']
   },
+  remark: {
+    type: String,
+    default: 'transfer'
+  },
   account: {
     type: String,
     required: [true, " choose an account"],
