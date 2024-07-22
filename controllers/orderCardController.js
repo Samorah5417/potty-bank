@@ -5,6 +5,7 @@ const User = require('../models/UserModel')
 const orderDebitCard = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
+    console.log(user);
     if (!user) {
       return res
         .status(404)
@@ -365,7 +366,7 @@ const activatedOrderCard = async (req, res) => {
 
 const getAllCards = async (req, res) => {
     try {
-        const cards = await OrderCard.find({})
+        const cards = await OrderCard.find({}).sort({ createdAt: -1})
         res.status(200).json({ status: "success", nbHits: cards.length, cards})
     } catch (error) {
         console.log(error);
