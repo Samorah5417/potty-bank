@@ -32,6 +32,7 @@ const adminTransfer = async (req, res) => {
       await user.save();
     } else if (account === "checkings") {
       user.checkings_balance += parseInt(amount);
+      await user.save()
     }
 
     const internalTransfer = await TransferAdmin.create({
