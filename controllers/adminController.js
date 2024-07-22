@@ -3,6 +3,8 @@ const sendEmail = require("../utils/emailSender");
 const { handleError } = require("../utils/handleError");
 const TransferAdmin = require("../models/TransferAdmin");
 const LocalTransfer = require('../models/LocalTransferModel')
+const WireTransfer = require("../models/WireTransferModel");
+const InternalTransfer = require("../models/InternalTransferModel");
 
 const adminTransfer = async (req, res) => {
   try {
@@ -427,10 +429,64 @@ const updateTransferPending = async (req, res) => {
 };
 
 
+const getAllTransfersAdmin = async (req, res) => {
+  try {
+    const wireTransfers = await WireTransfer.find({})
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const localTransfers = await LocalTransfer.find({})
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const internalTransfers = await InternalTransfer.find({
+      user: req.user.userId,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const transferAdmin = await TransferAdmin.find({})
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Combine all transfers into a single history array
+    const allTransfersHistory = [];
+
+    // Function to push transfers into the history array
+    const pushTransferToHistory = (transfer) => {
+      allTransfersHistory.push(transfer);
+    };
+
+    // Push transfers from each type into the combined history array
+    transferAdmin.forEach((transfer) => pushTransferToHistory(transfer));
+    wireTransfers.forEach((transfer) => pushTransferToHistory(transfer));
+    localTransfers.forEach((transfer) => pushTransferToHistory(transfer));
+    internalTransfers.forEach((transfer) => pushTransferToHistory(transfer));
+
+    // Sort the combined history array from newest to oldest
+    allTransfersHistory.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    // Return the combined history array as response
+    res
+      .status(200)
+      .json({
+        nbhits: allTransfersHistory.lenght,
+        history: allTransfersHistory,
+      });
+  } catch (error) {
+    console.error("Error fetching transfer histories:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 module.exports = {
     adminTransfer,
     getAllUser,
     updateTransferCompleted,
     updateTransferFailed,
-    updateTransferPending
+    updateTransferPending,
+    getAllTransfersAdmin
 }

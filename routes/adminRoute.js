@@ -9,7 +9,8 @@ const {
   updateTransferCompleted,
   updateTransferFailed,
   updateTransferPending,
-  getAllUser
+  getAllUser,
+  getAllTransfersAdmin
 } = require("../controllers/adminController");
 
 router
@@ -42,7 +43,12 @@ router
     authenticateUser,
     authorizePermissions("admin"),
     getAllUser
+  )
+.get(
+    "/all-transfer/admin",
+    authenticateUser,
+    authorizePermissions("admin"),
+    getAllTransfersAdmin
   );
-
  
 module.exports = router;
