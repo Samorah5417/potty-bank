@@ -49,6 +49,7 @@ const LocalTransferSchema = new Schema(
     },
     remarks: {
       type: String,
+      default: 'Transfer'
     },
   },
   { timestamps: true }

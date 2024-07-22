@@ -28,7 +28,7 @@ const TransferAdminSchema = new Schema(
     },
     remarks: {
       type: String,
-      default: "transfer",
+      default: "Transfer",
     },
     account: {
       type: String,
