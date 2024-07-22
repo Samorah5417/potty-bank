@@ -14,7 +14,7 @@ const OrderCardSchema = new Schema(
     status: {
       type: String,
       enum: ["mailed", "on hold", "activated"],
-      default: "completed",
+      default: "mailed",
     },
     
     address: {

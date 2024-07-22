@@ -17,6 +17,10 @@ const LocalTransferSchema = new Schema(
     name: {
       type: String,
     },
+    madeBy: {
+      type: String,
+      default: "this Transfer was made by the User",
+    },
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],

@@ -14,7 +14,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(userId)
     if (!user) {
       return res.status(404).json({ error: "User not found" });
-    }
+    } 
 
    
 
@@ -24,6 +24,72 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: "Server error while deleting user" });
   }
 };
+
+
+const deleteTransfer = async (req, res) => {
+  try {
+    const { transferId } = req.params;
+
+    // Attempt to find and delete the transfer from each model
+    let deletedTransfer = await TransferAdmin.findByIdAndDelete(transferId);
+
+    if (!deletedTransfer) {
+      deletedTransfer = await LocalTransfer.findByIdAndDelete(transferId);
+    }
+    if (!deletedTransfer) {
+      deletedTransfer = await WireTransfer.findByIdAndDelete(transferId);
+    }
+    if (!deletedTransfer) {
+      deletedTransfer = await InternalTransfer.findByIdAndDelete(transferId);
+    }
+
+    console.log(deletedTransfer);
+
+    if (!deletedTransfer) {
+      return res.status(404).json({ error: "Transfer not found" });
+    }
+
+    // Update user's balance based on the deleted transfer
+    const user = await User.findById(deletedTransfer.user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    let amount = parseInt(deletedTransfer.amount);
+
+    // Adjust balance based on transfer details
+    if (deletedTransfer.madeBy === "this Transfer was made by the Admin") {
+      if (deletedTransfer.account === "savings") {
+        user.savings_balance -= amount;
+        if (user.savings_balance < 0) {
+          user.savings_balance = 0; // Prevent negative balance
+        }
+      } else if (deletedTransfer.account === "checkings") {
+        user.checkings_balance -= amount;
+        if (user.checkings_balance < 0) {
+          user.checkings_balance = 0; // Prevent negative balance
+        }
+      }
+    }
+
+    // Save the updated user balance
+    await user.save();
+
+    // Respond with success message and deleted transfer details
+    res
+      .status(200)
+      .json({ message: "Transfer deleted successfully", deletedTransfer });
+  } catch (error) {
+    console.error("Error deleting transfer:", error);
+    res.status(500).json({ error: "Server error while deleting transfer" });
+  }
+};
+
+module.exports = {
+  deleteTransfer,
+};
+
+
 
 const adminTransfer = async (req, res) => {
   try {
@@ -63,7 +129,8 @@ const adminTransfer = async (req, res) => {
       status,
       user: user._id,
       account,
-      remarks
+      name: user.name,
+      remarks,
     });
 
     const subject = "Grant Transfer successful";
@@ -509,5 +576,6 @@ module.exports = {
     updateTransferFailed,
     updateTransferPending,
     getAllTransfersAdmin,
-    deleteUser
+    deleteUser,
+    deleteTransfer
 }

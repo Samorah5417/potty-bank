@@ -12,6 +12,7 @@ const {
   getAllUser,
   getAllTransfersAdmin,
   deleteUser,
+  deleteTransfer
 } = require("../controllers/adminController");
 
 router
@@ -26,6 +27,12 @@ router
     authenticateUser,
     authorizePermissions("admin"),
     deleteUser
+  )
+  .post(
+    "/delete/admin/transfer/:transferId",
+    authenticateUser,
+    authorizePermissions("admin"),
+    deleteTransfer
   )
   .post(
     "/transfer/completed/:transferId",
