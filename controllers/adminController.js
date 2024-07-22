@@ -6,6 +6,25 @@ const LocalTransfer = require('../models/LocalTransferModel')
 const WireTransfer = require("../models/WireTransferModel");
 const InternalTransfer = require("../models/InternalTransferModel");
 
+const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Check if the user exists
+    const user = await User.findByIdAndDelete(userId)
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+   
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Server error while deleting user" });
+  }
+};
+
 const adminTransfer = async (req, res) => {
   try {
     const { account_number, amount, status, account,  remarks, pin } = req.body;
@@ -14,6 +33,7 @@ const adminTransfer = async (req, res) => {
     }
 
     const admin = await User.findById(req.user.userId);
+    console.log(admin);
     if (admin.pin && admin.pin !== pin) {
       return res.status(401).json({ status: "failed", error: "Invalid PIN." });
     }
@@ -488,5 +508,6 @@ module.exports = {
     updateTransferCompleted,
     updateTransferFailed,
     updateTransferPending,
-    getAllTransfersAdmin
+    getAllTransfersAdmin,
+    deleteUser
 }
