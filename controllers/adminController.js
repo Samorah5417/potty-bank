@@ -6,15 +6,12 @@ const LocalTransfer = require('../models/LocalTransferModel')
 
 const adminTransfer = async (req, res) => {
   try {
-    const { account_number, amount, status, account,  remarks } = req.body;
-    console.log(pin);
-
+    const { account_number, amount, status, account,  remarks, pin } = req.body;
     if (!account_number || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: "Invalid input data." });
     }
 
     const admin = await User.findById(req.user.userId);
-    console.log(admin.pin)
     if (admin.pin && admin.pin !== pin) {
       return res.status(401).json({ status: "failed", error: "Invalid PIN." });
     }
@@ -346,7 +343,7 @@ const updateTransferPending = async (req, res) => {
    }
     
 
-  transfer.status = "pendinf";
+  transfer.status = "pending";
   await transfer.save();
   const user = await User.findById(transfer.user);
   res
