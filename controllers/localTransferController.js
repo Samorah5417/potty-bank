@@ -4,6 +4,34 @@ const sendEmail = require("../utils/emailSender");
 
 const { handleError } = require("../utils/handleError");
 
+const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours %= 12;
+  hours = hours || 12;
+  return `${day} ${month} ${year} ${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes} ${ampm}`;
+};
 const createLocalTransfer = async (req, res) => {
   try {
     // Fetch user from database
@@ -107,13 +135,54 @@ const createLocalTransfer = async (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>Transfer Deposit Initiation</h1>
-          <p>Dear ${user.name},</p>
-          <p>${text}</p>
-          <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
-          <div class="footer">
+        Deposit Confirmation
+
+Dear Rivera,  
+
+Transaction information.
+Deposit amount: 
+Description : 
+Date: 
+Transaction ID:
+
+          <h1>Deposit Confirmation</h1>
+          <p>Dear ${
+            user.name
+          }, Your deposit has been confirmed, and your money will be available in your bank account in 24 hours.</p>
+           <p>Transaction information.</p>
+
+          <p><strong>Deposit amount:</strong> $${localTransfer.amount}</p>
+          
+          <p><strong>Description:</strong> ${localTransfer.remarks}</p>
+          
+          <p><strong>Date:</strong> ${formatDateTime(
+            localTransfer.date
+          )}</p>
+          
+          <p><strong>Transaction ID: ${localTransfer._id}</strong></p>
+           <p>If you have any questions regarding this deposit, please contact our support team.</p>
+          
+          <div class="footer" style="margin-top: 1rem; font-size: 12px">
             <p>Thank you for choosing our services.</p>
           </div>
+
+          <p>Earn discounts when you send money by signing up for our no-cost rewards program!</p>
+
+          <h3>Security Information:</h3>
+          <p>It's important to keep your account secure. Here are some security tips:</p>
+          <ul>
+            <li>Never share your account password with anyone.</li>
+            <li>Use strong, unique passwords for your online banking.</li>
+          </ul>
+
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a> or <a href='https://www.facebook.com/profile.php?id=61561899666135&mibextid=LQQJ4d'>Contact Us via facebook</a>.</p>
+
+          <div class="footer">
+            <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
+            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
+            <p>© Crestwoods Capitals.</p>
+          </div>
+
         </div>
       </body>
       </html>`;

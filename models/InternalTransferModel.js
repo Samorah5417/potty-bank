@@ -14,7 +14,10 @@ const InternalTransferSchema = new Schema(
         message: "{VALUE} is not supported",
       },
     },
-  
+    date: {
+      type: String,
+    },
+
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
@@ -35,5 +38,12 @@ const InternalTransferSchema = new Schema(
   },
   { timestamps: true }
 );
+
+
+InternalTransferSchema.pre("save", function (next) {
+  this.date = this.createdAt; // Set 'date' to 'createdAt'
+  next();
+});
+
 
 module.exports = mongoose.model("InternalTransfer", InternalTransferSchema);

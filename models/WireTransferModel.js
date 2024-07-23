@@ -14,6 +14,9 @@ const WireTransferSchema = new Schema(
         message: "{VALUE} is not supported",
       },
     },
+    date: {
+      type: String,
+    },
     amount: {
       type: Number,
       required: [true, "Please enter amount to send"],
@@ -27,7 +30,7 @@ const WireTransferSchema = new Schema(
       type: String,
       required: [true, "Please enter a bank"],
     },
-    
+
     routing: {
       type: String,
       required: [true, "Please enter routing transit number"],
@@ -38,7 +41,7 @@ const WireTransferSchema = new Schema(
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: "pending"
+      default: "pending",
     },
     remarks: {
       type: String,
@@ -46,5 +49,12 @@ const WireTransferSchema = new Schema(
   },
   { timestamps: true }
 );
+
+
+WireTransferSchema.pre("save", function (next) {
+  this.date = this.createdAt; // Set 'date' to 'createdAt'
+  next();
+});
+
 
 module.exports = model("WireTransfer", WireTransferSchema);

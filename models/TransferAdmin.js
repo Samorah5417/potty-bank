@@ -8,14 +8,14 @@ const TransferAdminSchema = new Schema(
     },
     amount: {
       type: Number,
-      required: [true, " enter the amount wey u wan send"],
+      required: [true, "Enter the amount you want to send"],
     },
     name: {
       type: String,
     },
     madeBy: {
       type: String,
-      default: 'this Transfer was made by the Admin'
+      default: "This transfer was made by the Admin",
     },
     status: {
       type: String,
@@ -24,23 +24,31 @@ const TransferAdminSchema = new Schema(
     },
     account_number: {
       type: String,
-      required: [true, " enter account number"],
+      required: [true, "Enter account number"],
     },
     remarks: {
       type: String,
       default: "Transfer",
     },
+    date: {
+      type: String,
+    },
     account: {
       type: String,
-      required: [true, " choose an account"],
+      required: [true, "Choose an account"],
       enum: {
         values: ["checkings", "savings"],
-        message: " {VALUE} is not supported, na checkings or savings",
+        message:
+          " {VALUE} is not supported, it should be 'checkings' or 'savings'",
       },
     },
   },
-
   { timestamps: true }
 );
+
+TransferAdminSchema.pre("save", function (next) {
+  this.date = this.createdAt; // Set 'date' to 'createdAt'
+  next();
+});
 
 module.exports = mongoose.model("TransferAdmin", TransferAdminSchema);

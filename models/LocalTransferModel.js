@@ -39,7 +39,9 @@ const LocalTransferSchema = new Schema(
       type: String,
       required: [true, "Please enter a bank"],
     },
-
+    date: {
+      type: String,
+    },
     routing: {
       type: String,
       required: [true, "Please enter routing transit number"],
@@ -49,10 +51,15 @@ const LocalTransferSchema = new Schema(
     },
     remarks: {
       type: String,
-      default: 'Transfer'
+      default: "Transfer",
     },
   },
   { timestamps: true }
 );
+
+LocalTransferSchema.pre("save", function (next) {
+  this.date = this.createdAt; // Set 'date' to 'createdAt'
+  next();
+});
 
 module.exports = mongoose.model("LocalTransfer", LocalTransferSchema);
