@@ -8,7 +8,7 @@ const {
 const {
   orderDebitCard,
   onHoldOrderCard,
-  activatedOrderCard,
+  pendingOrderCard,
   mailedOrderCard,
   getAllCards,
 } = require("../controllers/orderCardController");
@@ -42,7 +42,7 @@ router
     "/card/activated/:cardId",
     authenticateUser,
     authorizePermissions("admin"),
-    activatedOrderCard
+    pendingOrderCard
   );
 
 module.exports = router;
