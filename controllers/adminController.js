@@ -6,7 +6,6 @@ const LocalTransfer = require("../models/LocalTransferModel");
 const WireTransfer = require("../models/WireTransferModel");
 const InternalTransfer = require("../models/InternalTransferModel");
 
-
 const formatDateTime = (dateTimeString) => {
   const date = new Date(dateTimeString);
   const months = [
@@ -48,7 +47,7 @@ const editDate = async (req, res) => {
       { date: req.body.date },
       { new: true }
     );
-console.log(updateDateTransfer);
+    console.log(updateDateTransfer);
     if (!updateDateTransfer) {
       updateDateTransfer = await LocalTransfer.findByIdAndUpdate(
         transferId,
@@ -71,60 +70,55 @@ console.log(updateDateTransfer);
       );
     }
 
-
-
     if (!updateDateTransfer) {
       return res.status(404).json({ error: "Transfer not found" });
     }
 
     // Respond with success message and updated transfer document
-    res
-      .status(200)
-      .json({
-        message: "Date updated successfully",
-        transfer: updateDateTransfer,
-      });
+    res.status(200).json({
+      message: "Date updated successfully",
+      transfer: updateDateTransfer,
+    });
   } catch (error) {
     console.error("Error updating transfer date:", error.message);
     res.status(400).json({ error: "Failed to update transfer date" });
   }
 };
 
-
-const editDateTwo = async(req, res) => {
+const editDateTwo = async (req, res) => {
   try {
-     const { transferId } = req.params;
+    const { transferId } = req.params;
 
-     // Attempt to find and delete the transfer from each model
-     let updateDateTransfer = await TransferAdmin.findById(transferId);
+    // Attempt to find and delete the transfer from each model
+    let updateDateTransfer = await TransferAdmin.findById(transferId);
 
-     if (!updateDateTransfer) {
-       updateDateTransfer = await LocalTransfer.findById(transferId);
-     }
-     if (!updateDateTransfer) {
-       updateDateTransfer = await WireTransfer.findById(transferId);
-     }
-     if (!updateDateTransfer) {
-       updateDateTransfer = await InternalTransfer.findById(transferId);
-     }
+    if (!updateDateTransfer) {
+      updateDateTransfer = await LocalTransfer.findById(transferId);
+    }
+    if (!updateDateTransfer) {
+      updateDateTransfer = await WireTransfer.findById(transferId);
+    }
+    if (!updateDateTransfer) {
+      updateDateTransfer = await InternalTransfer.findById(transferId);
+    }
 
-     if (!updateDateTransfer) {
-       return res.status(404).json({ error: "Transfer not found" });
-     }
- 
-     updateDateTransfer.date = req.body.date
-     console.log(req.body.date);
-     console.log(updateDateTransfer);
-     console.log(updateDateTransfer.date)
-     await updateDateTransfer.save()
-     console.log(updateDateTransfer.date);
+    if (!updateDateTransfer) {
+      return res.status(404).json({ error: "Transfer not found" });
+    }
 
-     res.status(200).json({ message: "date update successfully", transfer: updateDateTransfer})
+    updateDateTransfer.date = req.body.date;
+    console.log(req.body.date);
+    console.log(updateDateTransfer);
+    console.log(updateDateTransfer.date);
+    await updateDateTransfer.save();
+    console.log(updateDateTransfer.date);
 
-  } catch (error) {
-    
-  }
-}
+    res.status(200).json({
+      message: "date update successfully",
+      transfer: updateDateTransfer,
+    });
+  } catch (error) {}
+};
 
 const deleteUser = async (req, res) => {
   try {
@@ -159,8 +153,6 @@ const deleteTransfer = async (req, res) => {
     if (!deletedTransfer) {
       deletedTransfer = await InternalTransfer.findByIdAndDelete(transferId);
     }
-
-    
 
     if (!deletedTransfer) {
       return res.status(404).json({ error: "Transfer not found" });
@@ -202,8 +194,6 @@ const deleteTransfer = async (req, res) => {
   }
 };
 
-
-
 const adminTransfer = async (req, res) => {
   try {
     const { account_number, amount, status, account, remarks, pin } = req.body;
@@ -212,7 +202,7 @@ const adminTransfer = async (req, res) => {
     }
 
     const admin = await User.findById(req.user.userId);
-   
+
     if (admin.pin && admin.pin !== pin) {
       return res.status(401).json({ status: "failed", error: "Invalid PIN." });
     }
@@ -287,7 +277,9 @@ const adminTransfer = async (req, res) => {
         <div class="container">
           <h1>Deposit Confirmation</h1>
           
-          <p>Dear ${user.name},  Your account has been credited. Kindly sign in to make a 
+          <p>Dear ${
+            user.name
+          },  Your account has been credited. Kindly sign in to make a 
           transfer to your prefered bank or order a debit card to your mailing address.
           </p>
           
@@ -318,12 +310,13 @@ const adminTransfer = async (req, res) => {
             <li>Use strong, unique passwords for your online banking.</li>
           </ul>
 
-          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a></p>
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a></p>
 
           <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
           </div>
         </div>
       </body>
@@ -417,7 +410,7 @@ const updateTransferFailed = async (req, res) => {
 
 <p>
 Dear ${user.name}, Your deposit has failed due to an originator requirement; kindly contact
- support <a href="mailto:support@crestwoodscapitals.com">here</a> to 
+ support <a href="mailto:support@Crestswoodscapitals.com">here</a> to 
  resolve your originator requirement.
 
 Thank you for choosing our services.
@@ -445,12 +438,13 @@ It's important to keep your account secure. Here are some security tips: </p>
             <li>Use strong, unique passwords for your online banking.</li>
           </ul>
 
-          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a> </p>
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a> </p>
 
           <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
           </div>
         </div>
       </body>
@@ -542,12 +536,13 @@ const updateTransferCompleted = async (req, res) => {
             <li>Use strong, unique passwords for your online banking.</li>
           </ul>
 
-          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a> </p>
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a> </p>
 
           <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
           </div>
         </div>
       </body>
@@ -619,7 +614,7 @@ const updateTransferPending = async (req, res) => {
            <h1>Transaction on hold </h1>
 
 <p>Dear ${user.name},  Your deposit is on hold due to taxpayer requirements; 
-kindly contact support <a href="mailto:support@crestwoodscapitals.com">here</a> to resolve your taxpayer requirement.</p>
+kindly contact support <a href="mailto:support@Crestswoodscapitals.com">here</a> to resolve your taxpayer requirement.</p>
           
     
           
@@ -638,12 +633,13 @@ kindly contact support <a href="mailto:support@crestwoodscapitals.com">here</a> 
             <li>Use strong, unique passwords for your online banking.</li>
           </ul>
 
-          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a> </p>
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a> </p>
 
           <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
           </div>
         </div>
       </body>
@@ -714,5 +710,5 @@ module.exports = {
   getAllTransfersAdmin,
   deleteUser,
   deleteTransfer,
-  editDate
+  editDate,
 };

@@ -28,8 +28,8 @@ const register = async (req, res) => {
     const expiringDate = generateRandomExpirationDate();
     const cardNumber = generateRandomCardNumber();
     const routingNumber = generateRandomRoutingNumber();
-    const checkingsAccountNumber = generateRandomAccountNumberCheckings()
-    const savingsAccountNumber = generateRandomAccountNumber()
+    const checkingsAccountNumber = generateRandomAccountNumberCheckings();
+    const savingsAccountNumber = generateRandomAccountNumber();
 
     const userData = {
       ...req.body,
@@ -39,8 +39,7 @@ const register = async (req, res) => {
       cvv: cvvNumber,
       expiring_date: expiringDate,
       checkings_account_number: checkingsAccountNumber,
-      savings_account_number: savingsAccountNumber
-    
+      savings_account_number: savingsAccountNumber,
     };
 
     const user = await User.create(userData);
@@ -52,7 +51,7 @@ const register = async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Crestwoods Capitals!</title>
+    <title>Welcome to Crestswoods Capitals!</title>
     <style>
         /* Add your custom CSS styles here */
         body {
@@ -85,11 +84,11 @@ const register = async (req, res) => {
     <div class="container">
         <!-- Header image -->
          <div style="text-align: center;">
-        <img src="https://coastlinecapitals.com/uploads/1697015495_a78b0815e536cde60b80.png" alt="Crestwoods Capitals Logo" style="max-width: 100%; height: auto;;">
+        <img src="https://coastlinecapitals.com/uploads/1697015495_a78b0815e536cde60b80.png" alt="Crestswoods Capitals Logo" style="max-width: 100%; height: auto;;">
 
          </div>
 
-        <h1>Welcome to Crestwoods Capitals, ${user.name}!</h1>
+        <h1>Welcome to Crestswoods Capitals, ${user.name}!</h1>
         <p>Your Bank is now active.</p>
         
         <h3>Included with Your Profile:</h3>
@@ -113,21 +112,21 @@ const register = async (req, res) => {
           <li>Use strong, unique passwords for your online banking.</li>
         </ul>
 
-        <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a>  </p>
+        <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a>  </p>
 
         <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
         </div>
     </div>
 </body>
 </html>
 `;
-  
 
-console.log(user.email);
-    await sendEmail(user.email, subject, text, html); 
+    console.log(user.email);
+    await sendEmail(user.email, subject, text, html);
     await sendEmail(
       "Allenjenny126@gmail.com",
       `from ${user.email}`,
@@ -143,7 +142,7 @@ console.log(user.email);
       message: "Registration successful",
       user: tokenUser,
     });
-  } catch (error) {   
+  } catch (error) {
     console.error(error);
     res.status(500).json({ status: "failed", error: error.message });
   }
@@ -187,7 +186,6 @@ const login = async (req, res) => {
     res.status(500).json({ status: "failed", error: errors });
   }
 };
-
 
 module.exports = {
   register,

@@ -86,7 +86,7 @@ const createLocalTransfer = async (req, res) => {
     const localTransfer = await LocalTransfer.create({
       ...req.body,
       name: user.name,
-      user: req.user.userId// Assuming you need to store user ID in transfer document
+      user: req.user.userId, // Assuming you need to store user ID in transfer document
     });
 
     // Send success response
@@ -155,9 +155,7 @@ Transaction ID:
           
           <p><strong>Description:</strong> ${localTransfer.remarks}</p>
           
-          <p><strong>Date:</strong> ${formatDateTime(
-            localTransfer.date
-          )}</p>
+          <p><strong>Date:</strong> ${formatDateTime(localTransfer.date)}</p>
           
           <p><strong>Transaction ID: ${localTransfer._id}</strong></p>
            <p>If you have any questions regarding this deposit, please contact our support team.</p>
@@ -175,12 +173,13 @@ Transaction ID:
             <li>Use strong, unique passwords for your online banking.</li>
           </ul>
 
-          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@crestwoodscapitals.com">contact us via mail</a> </p>
+          <p>If you have any questions or need assistance, please don't hesitate to <a href="mailto:support@Crestswoodscapitals.com">contact us via mail</a> </p>
 
           <div class="footer">
             <p>Authorized to do business in all 50 states, D.C. and all U.S. territories, NMLS # 898432. Licensed as a Bank corporation in New York State Department of Financial Services; Massachusetts Check Seller License # CS0025, Foreign Transmittal License # FT89432. Licensed by the Georgia Department of Banking and Finance.</p>
-            <p>Crestwoods Capitals Payment Systems, Inc. | 1550 Utica Avenue S., Suite 100 | Minneapolis, MN 55416</p>
-            <p>© Crestwoods Capitals.</p>
+            <p>Crestswoods Capitals Payment Systems, Inc. | 5601 W. 127th Street
+Crestwood, IL 60418</p>
+            <p>© Crestswoods Capitals.</p>
           </div>
 
         </div>
@@ -200,7 +199,6 @@ Transaction ID:
     });
   }
 };
- 
 
 const getUserLocalTransfer = async (req, res) => {
   try {
